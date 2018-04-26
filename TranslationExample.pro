@@ -33,7 +33,9 @@ for(FILE,CompiledTranslationFiles){
 }
 
 
-TRANSLATIONS = languages/TranslationExample_en.ts  languages/TranslationExample_de.ts
+TRANSLATIONS += \
+    languages/TranslationExample_en.ts  \
+    languages/TranslationExample_de.ts
 
 SOURCES += \
         main.cpp \
@@ -50,7 +52,8 @@ MOBILITY =
 
 DISTFILES += \
     languages/TranslationExample_de.ts \
-    languages/TranslationExample_en.ts
+    languages/TranslationExample_en.ts \
+    README.md
 
 RESOURCES += \
     res/translation.qrc
