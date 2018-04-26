@@ -44,18 +44,24 @@ TRANSLATIONS += \
    - ToDo: Add code to *.pro file to copy *.qm to ./res/translation
 
 ## Automated Translation Using Google Translate
-### i18n-translate-qt-ts
-I made this i18n-translate-qt-ts node.js script.
+### [i18n-translate-qt-ts](https://github.com/esutton/i18n-translate-qt-ts)
 
-It requires a commercial Google Translate API key:
+
+I created this [i18n-translate-qt-ts](https://github.com/esutton/i18n-translate-qt-ts) as a node.js command line utility.
+
+Use requires a commercial Google Translate API key:
 - https://github.com/esutton/i18n-translate-qt-ts
 
-To add translations to all ./languages/*.ts files
+To add translations to all ./languages/*.ts files in this qt-translation-example project:
 ````
 # Use environment variable to store your API key
 export API_KEY=AIzy0Vj...AIzy0VjQ
 node index.js ${API_KEY} languages en
 ````
 
-- If errors, may need to run multiple times until all strings have translations.
-- Send to a native speaker for improvements.
+- If errors occur, you may need to run multiple times until all strings have translations.
+    - Perhaps throttling the API calls might help this.
+- If needed, send auto-translations to a native speaker for improvements.
+    - [i18n-translate-qt-ts](https://github.com/esutton/i18n-translate-qt-ts) will not update 
+    a manual translation unless ````translation/@type=unfinished```` 
+    or source string is non-empty and ````<translation>```` is empty.
