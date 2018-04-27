@@ -4,6 +4,24 @@
 #include <QActionGroup>
 #include <QDir>
 
+
+void switchTranslator(QTranslator& translator, const QString& filename)
+{
+    // remove the old translator
+    qApp->removeTranslator(&translator);
+
+    // load the new translator
+    bool result = translator.load(filename);
+    qDebug("translator.load(%s) %s", filename.toLatin1().data(), result ? "true" : "false" );
+
+    if(!result) {
+        qWarning("*** Failed translator.load(\"%s\")", filename.toLatin1().data());
+        return;
+    }
+    qApp->installTranslator(&translator);
+}
+
+
 // See: https://wiki.qt.io/How_to_create_a_multi_language_application
 //
 MainWindow::MainWindow(QWidget *parent) :
@@ -16,6 +34,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // macOS setNativeMenuBar(false)
     ui->menuBar->setNativeMenuBar(false);
+
+    QString resourceFileName = ":/resource/translation/TranslationExample_de.qm";
+    switchTranslator(m_translator, resourceFileName);
+     // ui->retranslateUi(this);
+
 }
 
 MainWindow::~MainWindow()
@@ -26,25 +49,21 @@ MainWindow::~MainWindow()
 // we create the menu entries dynamically, dependent on the existing translations.
 void MainWindow::createLanguageMenu(void)
 {
-
-    QActionGroup* langGroup = new QActionGroup(ui->menuLanguage);
-    langGroup->setExclusive(true);
-
-    connect(langGroup, SIGNAL (triggered(QAction *)), this, SLOT (slotLanguageChanged(QAction *)));
-
     // format systems language
     QString defaultLocale = QLocale::system().name(); // e.g. "de_DE"
     defaultLocale.truncate(defaultLocale.lastIndexOf('_')); // e.g. "de"
-
     m_langPath = ":/resource";
     m_langPath.append("/translation");
     QDir dir(m_langPath);
     qDebug("exists %s ", dir.exists() ? "true" : "false" );
 
-    QStringList fileNames = dir.entryList(QStringList("TranslationExample_*.qm"));
-
+    // Create Language Menu to match qm translation files found
+    QActionGroup* langGroup = new QActionGroup(ui->menuLanguage);
+    langGroup->setExclusive(true);
+    connect(langGroup, SIGNAL (triggered(QAction *)), this, SLOT (slotLanguageChanged(QAction *)));
     qDebug("%s", m_langPath.toLatin1().data());
 
+    QStringList fileNames = dir.entryList(QStringList("TranslationExample_*.qm"));
     for (int i = 0; i < fileNames.size(); ++i) {
         // get locale extracted by filename
         QString locale;
@@ -83,22 +102,6 @@ void MainWindow::slotLanguageChanged(QAction* action)
     qDebug("action->data %s", action->data().toString().toLatin1().data());
     loadLanguage(action->data().toString());
     setWindowIcon(action->icon());
-}
-
-void switchTranslator(QTranslator& translator, const QString& filename)
-{
-    // remove the old translator
-    qApp->removeTranslator(&translator);
-
-    // load the new translator
-    bool result = translator.load(filename);
-    qDebug("translator.load(%s) %s", filename.toLatin1().data(), result ? "true" : "false" );
-
-    if(!result) {
-        qWarning("*** Failed translator.load(\"%s\")", filename.toLatin1().data());
-        return;
-    }
-    qApp->installTranslator(&translator);
 }
 
 void MainWindow::loadLanguage(const QString& rLanguage)
